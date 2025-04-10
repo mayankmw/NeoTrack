@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hangout Completed</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; color: #333; }
+    .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+    .header { background-color: #4caf50; color: white; padding: 20px; text-align: center; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { padding: 20px; line-height: 1.6; }
+    .content p { margin: 16px 0; }
+    .content ul { margin: 16px 0; padding: 0; list-style: none; }
+    .content li { margin-bottom: 8px; }
+    .footer { background-color: #f1f1f1; text-align: center; padding: 10px; font-size: 12px; color: #666; }
+    .section { margin-bottom: 20px; }
+    .section h2 { font-size: 18px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header"><h1>Hangout Completed</h1></div>
+    <div class="content">
+      <p>Hello {{name}},</p>
+      <p>The hangout <strong>"{{title}}"</strong> has been marked as completed. Here are the details:</p>
+
+      <div class="section">
+        <h2>Hangout Details</h2>
+        <ul>
+          <li><strong>Title:</strong> {{title}}</li>
+          <li><strong>Location:</strong> {{location}}</li>
+          <li><strong>Date:</strong> {{date}}</li>
+          <li><strong>Budget:</strong> ₹{{budget}}</li>
+          <li><strong>Status:</strong> {{status}}</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Participants</h2>
+        <ul>
+          {{#each participants}}
+          <li>{{this.name}} ({{this.email}}) - Contributed: ₹{{this.contributed}}, Owes: ₹{{this.owes}}</li>
+          {{/each}}
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Expenses</h2>
+        {{#if expenses.length}}
+        <ul>
+          {{#each expenses}}
+          <li>
+            <strong>Description:</strong> {{this.description}}<br />
+            <strong>Amount:</strong> ₹{{this.amount}}<br />
+            <strong>Paid By:</strong> {{this.paidBy}}<br />
+            <strong>Split Among:</strong> {{#each this.splitAmong}}{{this}}, {{/each}}
+          </li>
+          {{/each}}
+        </ul>
+        {{else}}
+        <p>No expenses were recorded for this hangout.</p>
+        {{/if}}
+      </div>
+
+      <p>Thank you for using NeoTrack for your hangout planning and management.</p>
+      <p>Cheers,<br />NeoTrack Team</p>
+    </div>
+    <div class="footer">
+      <p>NeoTrack &copy; 2025. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

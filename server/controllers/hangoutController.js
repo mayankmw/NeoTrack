@@ -295,6 +295,79 @@ exports.respondToInvitation = async (req, res) => {
   }
 };
 
+exports.completeHangout = async (req, res) => {
+  try {
+    const { hangoutId } = req.body; // Hangout ID passed in the request body
+    const userId = req.user.id; // Authenticated user's ID
+
+    // Fetch the hangout by ID
+    const hangout = await Hangout.findById(hangoutId);
+    if (!hangout) {
+      return res.status(200).json({ success: false, message: "Hangout not found." });
+    }
+
+    // Check if the authenticated user is the creator of the hangout
+    if (hangout.user.toString() !== userId) {
+      return res.status(200).json({ success: false, message: "You are not authorized to complete this hangout." });
+    }
+
+    // Check if the hangout is already completed
+    if (hangout.status === "completed") {
+      return res.status(200).json({ success: false, message: "This hangout is already marked as completed." });
+    }
+
+    // Mark the hangout as completed
+    hangout.status = "completed";
+
+    await hangout.save();
+
+    // Prepare email details
+    const emailPromises = hangout.participants.map((participant) => {
+      if (participant.email) {
+        return sendEmail(
+          participant.email,
+          `Hangout Completed: ${hangout.title}`,
+          `The hangout "${hangout.title}" has been marked as completed.`,
+          path.join(__dirname, "../html/hangouts/hangoutCompleted.html"),
+          {
+            name: participant.name,
+            title: hangout.title,
+            location: hangout.location,
+            date: hangout.date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+            budget: hangout.budget || 0,
+            status: hangout.status,
+            participants: hangout.participants.map((p) => ({
+              name: p.name,
+              email: p.email,
+              contributed: p.contributed,
+              owes: p.owes,
+            })),
+            expenses: hangout.expenses.map((expense) => ({
+              description: expense.description,
+              amount: expense.amount,
+              paidBy: expense.paidBy,
+              splitAmong: expense.splitAmong,
+            })),
+          }
+        );
+      }
+    });
+    
+
+    // Send notifications to all participants
+    await Promise.all(emailPromises);
+
+    res.status(200).json({
+      success: true,
+      message: "Hangout marked as completed. Notifications sent to all participants.",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error. Please try again later." });
+  }
+};
+
+
 
 exports.deleteHangout = async (req, res) => {
   try {

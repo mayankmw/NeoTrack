@@ -33,6 +33,13 @@ const HangoutSchema = new mongoose.Schema({
       splitAmong: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     },
   ],
+
+  status: {
+    type: String,
+    enum: ["upcoming", "in-progress", "completed", "canceled"],
+    default: "upcoming",
+  },
+  
 }, { timestamps: true });
 
 module.exports = mongoose.model("Hangout", HangoutSchema);

@@ -6,6 +6,7 @@ const {
   respondToInvitation,
   getUserInvitations, 
   addExpense,
+  completeHangout,
   deleteHangout 
 } = require("../controllers/hangoutController");
 const authMiddleware = require("../middleware/authMiddleware");
@@ -28,6 +29,10 @@ router.post("/invite/respond", authMiddleware, respondToInvitation);
 
 // Add an expense to a hangout (Protected Route)
 router.post("/add-expense", authMiddleware, addExpense);
+
+// Mark a hangout as completed (Protected Route)
+router.post("/complete", authMiddleware, completeHangout);
+
 
 router.post("/delete", authMiddleware, deleteHangout);
 

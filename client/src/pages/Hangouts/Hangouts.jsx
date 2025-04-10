@@ -14,7 +14,17 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 export default function HangoutsPage() {
   const [hangouts, setHangouts] = useState([]);
@@ -104,21 +114,26 @@ export default function HangoutsPage() {
   return (
     <div className="flex justify-center min-h-svh bg-gradient-to-br from-zinc-100 to-zinc-300 dark:from-zinc-900 dark:to-zinc-800 p-6 md:p-10">
       {/* Delete Alert Dialog */}
-       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this hangout? This action cannot be undone.
+              Are you sure you want to delete this hangout? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction 
-            className="bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
-            onClick={handleDeleteHangout}>
+            <AlertDialogAction
+              className="bg-blue-500 text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-400"
+              onClick={handleDeleteHangout}
+            >
               Confirm
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -233,7 +248,7 @@ export default function HangoutsPage() {
 
               try {
                 const { description, amount, paidBy, splitAmong } = expenseData;
-      
+
                 await API.post("/hangouts/add-expense", {
                   hangoutId: activeHangout._id,
                   description,
@@ -241,13 +256,13 @@ export default function HangoutsPage() {
                   paidBy,
                   splitAmong,
                 });
-      
+
                 toast.success("Expense added successfully!");
-      
+
                 // Optionally update hangouts or refetch
                 const updatedHangouts = await API.post("/hangouts/my-hangouts");
                 setHangouts(updatedHangouts.data.hangouts);
-      
+
                 setDialogType(null); // Close dialog
                 setExpenseData({
                   description: "",
@@ -353,7 +368,7 @@ export default function HangoutsPage() {
                 </Button>
               </DialogClose>
               <Button variant="outline" disabled={loading} type="submit">
-              {loading ? "Adding Expense..." : "Add Expense"}
+                {loading ? "Adding Expense..." : "Add Expense"}
               </Button>
             </div>
           </form>
@@ -501,9 +516,25 @@ export default function HangoutsPage() {
                 >
                   <Card className="shadow-md hover:shadow-xl border border-zinc-200 dark:border-zinc-700 transition-shadow">
                     <CardHeader className="flex justify-between items-center">
-                      <CardTitle className="text-lg font-semibold">
-                        {hangout.title}
-                      </CardTitle>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-lg font-semibold">
+                          {hangout.title}
+                        </CardTitle>
+                        <Badge
+                          variant={
+                            hangout.status === "completed"
+                              ? "success"
+                              : hangout.status === "in progress"
+                              ? "info"
+                              : hangout.status === "canceled"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                        >
+                          {hangout.status.charAt(0).toUpperCase() +
+                            hangout.status.slice(1)}
+                        </Badge>
+                      </div>
                       <button
                         onClick={() => openDeleteDialog(hangout._id)}
                         className="text-red-500 hover:text-red-700"
@@ -512,6 +543,7 @@ export default function HangoutsPage() {
                         <Trash size={20} />
                       </button>
                     </CardHeader>
+
                     <CardContent className="p-2 text-sm space-y-2 text-zinc-600 dark:text-zinc-300">
                       <p>📅 {new Date(hangout.date).toLocaleDateString()}</p>
                       <p>

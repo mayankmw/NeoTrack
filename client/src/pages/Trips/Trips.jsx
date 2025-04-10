@@ -408,16 +408,31 @@ export default function TripsPage() {
           variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
         >
           <Card className="shadow-md hover:shadow-xl border border-zinc-200 dark:border-zinc-700 transition-shadow">
-            <CardHeader className="flex justify-between items-center">
+          <CardHeader className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
               <CardTitle className="text-lg font-semibold">{trip.title}</CardTitle>
-              <button
-                onClick={() => openDeleteDialog(trip._id)}
-                className="text-red-500 hover:text-red-700"
-                aria-label="Delete Trip"
+              <Badge
+                variant={
+                  trip.status === "completed"
+                    ? "success"
+                    : trip.status === "in progress"
+                    ? "info"
+                    : trip.status === "canceled"
+                    ? "destructive"
+                    : "secondary"
+                }
               >
-                <Trash size={20} />
-              </button>
-            </CardHeader>
+                {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
+              </Badge>
+            </div>
+            <button
+              onClick={() => openDeleteDialog(trip._id)}
+              className="text-red-500 hover:text-red-700"
+              aria-label="Delete Trip"
+            >
+              <Trash size={20} />
+            </button>
+          </CardHeader>
             <CardContent className="p-2 text-sm space-y-2 text-zinc-600 dark:text-zinc-300">
               <p>
                 📅 {new Date(trip.startDate).toLocaleDateString()} -{" "}
